@@ -2,4 +2,6 @@ fastapi
 mongomock
 pyspark
 pytest
+python-dotenv
+requests
 uvicorn
