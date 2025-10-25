@@ -1,5 +1,8 @@
 fastapi
+jinja2
+matplotlib
 mongomock
+pandas
 pyspark
 pytest
 python-dotenv
