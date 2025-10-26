@@ -1,10 +1,14 @@
 fastapi
+httpx
 jinja2
 matplotlib
 mongomock
 pandas
+pydantic
 pyspark
 pytest
 python-dotenv
+python-multipart
 requests
+scikit-learn
 uvicorn
