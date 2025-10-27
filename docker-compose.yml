@@ -1,0 +1,24 @@
+services:
+  api:
+    build: .
+    volumes:
+      - .:/code/app
+    depends_on:
+      - mongo_db
+    ports:
+      - "8080:8080"
+    networks:
+      - case_network
+  mongo_db:
+    image: mongo
+    volumes:
+      - database:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - case_network
+volumes:
+  database:
+networks:
+  case_network:
+    driver: bridge

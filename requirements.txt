@@ -1,4 +1,15 @@
 fastapi
-uvicorn
-pytest
+httpx
+jinja2
+matplotlib
 mongomock
+pandas
+pydantic
+pymongo
+pyspark
+pytest
+python-dotenv
+python-multipart
+requests
+scikit-learn
+uvicorn

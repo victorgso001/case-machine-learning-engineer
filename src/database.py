@@ -1,10 +1,16 @@
-from mongomock.mongo_client import MongoClient
+"""
+    Database functions
+"""
+from dotenv import load_dotenv
+from pymongo import MongoClient
+# from motor.motor_asyncio import AsyncIOMotorClient
 
-class InMemoryDatabase:
-    _instance = None
+load_dotenv()
 
-    def __new__(cls) -> MongoClient:
-        if cls._instance is None:
-            client = MongoClient()
-            cls._instance = client.get_database('memory_db')
-        return cls._instance
+
+def db_client():
+    """
+        Initialize db client
+    """
+    client = MongoClient("mongodb://mongo_db:27017/")
+    return client['mle_case_db']
