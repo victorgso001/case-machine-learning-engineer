@@ -7,11 +7,13 @@ import uvicorn
 import numpy as np
 from fastapi import FastAPI, File, HTTPException
 from sklearn.linear_model import LinearRegression
-from src.models import Inputs
+from src.schemas import Inputs, Outputs, outputs_serialized
+from src.database import db_client
 # from src.database import InMemoryDatabase
 
 
 app = FastAPI()
+db = db_client()
 MODEL = Optional[LinearRegression]
 
 
@@ -67,6 +69,12 @@ def predict(inputs: Inputs):
         Model prediction route
     """
     global MODEL
+
+    if not isinstance(MODEL, LinearRegression):
+        raise HTTPException(
+            status_code=403,
+            detail="Model not loaded. Please load model first"
+        )
     values = [
         inputs.dep_time,
         inputs.sched_dep_time,
@@ -77,46 +85,29 @@ def predict(inputs: Inputs):
         inputs.wind_speed_dest
     ]
 
-    predict = MODEL.predict(np.array(values).reshape(1, -1))
-    print(predict)
+    prediction = MODEL.predict(np.array(values).reshape(1, -1))
+
+    output = Outputs(**inputs.model_dump())
+    output.predicted_arr_delay = prediction[0]
+
+    db.outputs.insert_one(output.model_dump())
+
     return {"message": {
-        "arr_delay": predict[0]
+        "arr_delay": prediction[0]
     }}
-# @app.post("/user/", tags=["example"], summary="Insert user")
-# async def insert(data: dict):
-#     """
-#         Insert user to database
-#     """
-#     db = InMemoryDatabase()
-#     users = db.get_collection('users')
-#     users.insert_one(data)
-#     return {"status": "ok"}
 
 
-# @app.get(
-#   "/user/{name}",
-#   status_code=200,
-#   tags=["example"],
-#   summary="Get user by name"
-# )
-# async def get(name: str):
-#     """
-#         Get user from database
-#     """
-#     db = InMemoryDatabase()
-#     users = db.get_collection('users')
-#     user = users.find_one({"name": name})
-#     return {"status": "ok", "user": user}
-
-
-# @app.get("/user/", tags=["example"], summary="List all users")
-# async def user_list():
-#     """
-#         Get all users from database
-#     """
-#     db = InMemoryDatabase()
-#     users = db.get_collection('users')
-#     return {"status": "ok", "users": list(users.find({}, {"_id": 0}))}
+@app.get(
+    "/model/history",
+    tags=["Model predictions history"],
+    summary="Get a list of historic model predictions"
+)
+def history():
+    """
+        History routes function
+    """
+    outputs = list(db.outputs.find())
+    return outputs_serialized(outputs)
 
 
 if __name__ == "__main__":
