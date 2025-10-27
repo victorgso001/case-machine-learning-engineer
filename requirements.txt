@@ -5,6 +5,7 @@ matplotlib
 mongomock
 pandas
 pydantic
+pymongo
 pyspark
 pytest
 python-dotenv
