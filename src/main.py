@@ -9,7 +9,6 @@ from fastapi import FastAPI, File, HTTPException
 from sklearn.linear_model import LinearRegression
 from src.schemas import Inputs, Outputs, outputs_serialized
 from src.database import db_client
-# from src.database import InMemoryDatabase
 
 
 app = FastAPI()
